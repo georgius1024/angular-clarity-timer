@@ -1,20 +1,130 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div class="main-container noselect">
+  <header class="header-6">
+    <div class="branding">
+      <img src="/assets/timer-icon.png" class="logo-branding">
+      <span class="title">
+        Angular Timer App
+      </span>
+    </div>
+    <div class="header-actions">
+      <a href="javascript:void(0)" (click)="showHelp()" class="nav-link nav-icon">
+        <clr-icon shape="help" size="24"></clr-icon>
+      </a>
+    </div>
+  </header>
+  <div class="content-container">
+    <div class="content-area" style="display:flex; padding: 0px 12px !important;">
+      <div class="row" style="flex: 1 1 auto;">
+        <div class="col-xs-12 col-md-6 clr-offset-md-3">
+          <h4>{{ preset.name }}: {{ preset.duration }} мин.</h4>
+          <div class="progress flash progress-fade labeled">
+            <progress
+                [max]="preset.duration * 60"
+                [value]="timePassed / 1000"
+                data-displayval="0%"
+            ></progress>
+          </div>
+        </div>
+        <div class="col-xs-12 indicator">
+          {{minutes | number:'2.0-3'}}:{{seconds | number:'2.0-3'}}
+        </div>
+        <div class="col-xs-12 flex-xs-bottom" style="text-align: center; padding-bottom: 24px">
 
+          <div class="btn-group btn-primary">
+            <button type="button" class="btn btn-primary btn-icon" *ngIf="status==='stop'" (click)="start()">
+              <clr-icon shape="play" size="24"></clr-icon>
+            </button>
+
+            <button type="button" class="btn btn-primary btn-icon" *ngIf="status==='pause'" (click)="resume()">
+              <clr-icon shape="play" size="24"></clr-icon>
+            </button>
+
+            <button type="button" class="btn btn-primary btn-icon" *ngIf="status==='active'" (click)="pause()">
+              <clr-icon shape="pause" size="24"></clr-icon>
+            </button>
+
+            <button type="button" class="btn btn-primary btn-icon" [disabled]="status==='stop'" (click)="stop()">
+              <clr-icon shape="stop" size="24"></clr-icon>
+            </button>
+            <button type="button" class="btn btn-primary"(click)="pickPreset()">
+              Дисциплина: {{preset.name}}
+            </button>
+
+            <clr-dropdown>
+              <button type="button" class="btn btn-primary discipline-button" clrDropdownTrigger>
+                Дисциплина: {{preset.name}}
+                <clr-icon shape="caret down"></clr-icon>
+              </button>
+              <clr-dropdown-menu clrPosition="top-left" *clrIfOpen>
+                <label class="dropdown-header">Выберите дисциплину</label>
+
+                <button type="button" clrDropdownItem *ngFor="let preset of presets" (click)="selectPreset(preset)">
+                  {{preset.name}}
+                </button>
+                <label class="dropdown-header">Дополнительно</label>
+                <button type="button" clrDropdownItem (click)="toggleMemes()">
+                  Мемы: {{memesEnabled ? 'вкл' : 'выкл' }}
+                </button>
+              </clr-dropdown-menu>
+            </clr-dropdown>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="clr-footer">
+    <div class="clr-row">
+      <div class="clr-col">
+        &copy; 2018 ЮрЮрыч@Уралшутер
+      </div>
+      <div class="clr-col">
+        <div class="clr-row clr-justify-content-end">
+          <div>
+            <a href="#">www.uralshooter.ru</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <audio *ngFor="let track of tracks"
+           preload muted
+           [src]="'assets/phrases/' + track + '.mp3'"
+           [id]="'track_' + track"
+           (ended)="ended(e)"
+    >
+      Browser not supported
+    </audio>
+  </div>
+
+  <!------>
+
+  <clr-modal [(clrModalOpen)]="pickingPreset" clrModalSize="md">
+    <h3 class="modal-title">Выберите дисциплину</h3>
+    <div class="modal-body">
+      <div *ngFor="let preset of presets">
+        <a href="javascript:void(0)" (click)="selectPreset(preset)">
+          {{preset.name}}
+        </a>
+      </div>
+      <label>Дополнительно</label>
+      <button type="button" class="btn btn-primary" (click)="toggleMemes()">
+        Мемы: {{memesEnabled ? 'вкл' : 'выкл' }}
+      </button>
+    </div>
+  </clr-modal>
+
+  <clr-modal [(clrModalOpen)]="helpIsVisible" clrModalSize="md">
+    <h3 class="modal-title">О программе</h3>
+    <div class="modal-body">
+      <p>Веб-таймер предназначен для отсчета времени на соревнованиях и тренировках.</p>
+      <p>В разработке использован синтезатор речи от компании Яндекс.</p>
+      <p>Версия 1.0</p>
+      <p><a href="http://www.uralshooter.ru">&copy; 2018 ЮрЮрыч@Уралшутер</a></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="hideHelp()">ОК</button>
+    </div>
+  </clr-modal>
+</div>
