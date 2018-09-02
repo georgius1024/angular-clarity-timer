@@ -31,15 +31,12 @@ img.logo-branding {
 
 }
 
-.discipline-button {
-    border-bottom-left-radius: 0px;
-    border-top-left-radius: 0px;
-}
-
 .indicator {
     font-size: 20vw;
     text-align: center;
     line-height: 20vw;
+    color: #FF8400;
+    text-align: center;
     font-family: 'Roboto mono', monospace
 }
 

@@ -86,7 +86,7 @@ export class AppComponent implements AfterViewInit {
     'ave2'
     ];
 
-  title = 'web-timer';
+  title = 'Angular timer';
 
   constructor () {
     this.presets = Preset.all();
@@ -132,6 +132,7 @@ export class AppComponent implements AfterViewInit {
     this.timePassed = 0;
     this.minutes = 0;
     this.seconds = 0;
+    document.title = this.title;
   }
 
   start () {
