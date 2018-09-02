@@ -19,10 +19,16 @@ img.logo-branding {
     margin-right: 24px;
 }
 
-.btn-nav {
-    height: 100%;
-    margin: 0 1px;
-    border-radius: 0;
+@media (max-width: 576px) {
+    .nav-link {
+        display: none !important;
+    }
+}
+
+.nav-link.disabled {
+    cursor: not-allowed;
+    color: #565656;
+
 }
 
 .discipline-button {

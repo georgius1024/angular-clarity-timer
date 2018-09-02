@@ -15,6 +15,8 @@ export class AppComponent implements AfterViewInit {
   tickStart: number;
   timePassed: number;
   timer: any;
+  ave1 = 0;
+  ave2 = 0;
   status = 'stop';
   minutes = 0;
   seconds = 0;
@@ -141,6 +143,17 @@ export class AppComponent implements AfterViewInit {
     }, 100);
     this.status = 'active';
     this.speak(['start']);
+    this.ave1 = 0;
+    this.ave2 = 0;
+    if (this.memesEnabled) {
+      // Plan AVE!
+      if (this.preset.duration > 10 && (Math.random() > 0.6)) {
+        this.ave1 = 15 + 60 * Math.floor(Math.random() * this.preset.duration - 2);
+      }
+      if (this.preset.duration > 20 && (Math.random() > 0.5)) {
+        this.ave2 = 45 + 60 * Math.floor(Math.random() * this.preset.duration - 2);
+      }
+    }
   }
 
   stop () {
@@ -185,6 +198,12 @@ export class AppComponent implements AfterViewInit {
     if (this.timePassed >= (seconds + 1) * 1000) {
       // this.newSecond();
       const interval = Math.floor(this.elapsedTime() / 1000);
+      if (interval === this.ave1) {
+        this.speak(['ave1']);
+      }
+      if (interval === this.ave2) {
+        this.speak(['ave2']);
+      }
       this.seconds = interval % 60;
       this.minutes = Math.floor(interval / 60);
       this.updateWindowTitle();
