@@ -84,21 +84,45 @@ export class AppComponent implements AfterViewInit {
     '2f',
     'ave1',
     'ave2'
-    ];
+  ];
 
   title = 'Angular timer';
 
-  constructor () {
+  constructor() {
     this.presets = Preset.all();
     this.selectPreset(this.presets[0]);
     this.pickPreset();
   }
-  ngAfterViewInit () {
+  ngAfterViewInit() {
     this.currentSequence = [];
     this.preload();
+    document.addEventListener('keydown', (event) => {
+      switch (event.code) {
+        case 'Escape':
+          if (this.status === 'active') {
+            this.stop();
+          }
+          break;
+        case 'Space':
+          if (this.status === 'active') {
+            this.pause();
+          } else if (this.status === 'pause') {
+            this.resume();
+          }
+          break;
+        case 'Enter':
+          if (this.status === 'pause') {
+            this.resume();
+          } else if (this.status !== 'active') {
+            this.start();
+          }
+          break;
+      }
+    });
+
   }
 
-  pickPreset () {
+  pickPreset() {
     this.pickingPreset = true;
   }
 
@@ -110,32 +134,32 @@ export class AppComponent implements AfterViewInit {
     this.preset = preset;
     this.pickingPreset = false;
   }
-  showHelp () {
+  showHelp() {
     this.helpIsVisible = true;
   }
-  hideHelp () {
+  hideHelp() {
     this.helpIsVisible = false;
   }
-  toggleMemes () {
+  toggleMemes() {
     this.memesEnabled = !this.memesEnabled;
   }
 
-  currentTime () {
+  currentTime() {
     const d = new Date();
     return d.getTime();
   }
-  elapsedTime () {
+  elapsedTime() {
     return this.currentTime() - this.tickStart + this.timePassed;
   }
 
-  reset () {
+  reset() {
     this.timePassed = 0;
     this.minutes = 0;
     this.seconds = 0;
     document.title = this.title;
   }
 
-  start () {
+  start() {
     console.log('start');
     this.reset();
     this.tickStart = this.currentTime();
@@ -157,7 +181,7 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  stop () {
+  stop() {
     console.log('stop');
     this.reset();
     this.status = 'stop';
@@ -165,14 +189,14 @@ export class AppComponent implements AfterViewInit {
     this.speak(['stop']);
   }
 
-  complete () {
+  complete() {
     console.log('complete');
     this.status = 'stop';
     clearInterval(this.timer);
     this.speak(['finish']);
   }
 
-  pause () {
+  pause() {
     console.log('pause');
     clearInterval(this.timer);
     this.tick();
@@ -181,7 +205,7 @@ export class AppComponent implements AfterViewInit {
     this.speak(['pause']);
   }
 
-  resume () {
+  resume() {
     console.log('resume');
     this.tickStart = this.currentTime();
     this.timer = setInterval(() => {
@@ -191,7 +215,7 @@ export class AppComponent implements AfterViewInit {
     this.speak(['resume']);
   }
 
-  tick () {
+  tick() {
     const seconds = Math.floor(this.timePassed / 1000);
     const minutes = Math.floor(this.timePassed / 60000);
     this.timePassed = this.elapsedTime();
@@ -220,15 +244,15 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  updateWindowTitle () {
+  updateWindowTitle() {
     document.title = '[' +
       formatNumber(this.minutes, 'en', '2.0-3') +
       ':' +
       formatNumber(this.seconds, 'en', '2.0-3') +
-    ']';
+      ']';
   }
 
-  speak (speech: string[]) {
+  speak(speech: string[]) {
     this.shutUp();
     this.currentTrack = 0;
     this.currentSequence = speech.map(e => {
@@ -251,7 +275,7 @@ export class AppComponent implements AfterViewInit {
     });
     this.nextWord();
   }
-  speakQuantity (prefix: string, qty: number, units: string) {
+  speakQuantity(prefix: string, qty: number, units: string) {
     const speech = [];
     if (prefix) {
       speech.push(prefix);
@@ -330,23 +354,23 @@ export class AppComponent implements AfterViewInit {
     }
     this.speak(speech);
   }
-  minutesPassed (minutes: number) {
+  minutesPassed(minutes: number) {
     this.speakQuantity('passed', minutes, 'm');
   }
-  minutesRemained (minutes) {
+  minutesRemained(minutes) {
     this.speakQuantity('remained', minutes, 'm');
   }
-  secondsPassed (seconds) {
+  secondsPassed(seconds) {
     this.speakQuantity('passed', seconds, 's');
   }
-  secondsRemained (seconds) {
+  secondsRemained(seconds) {
     this.speakQuantity('remained', seconds, 's');
   }
-  secondsLastDozen (seconds) {
+  secondsLastDozen(seconds) {
     this.speakQuantity('', seconds, '');
   }
 
-  shutUp () {
+  shutUp() {
     const currentTrack = this.currentSequence[this.currentTrack];
     if (currentTrack) {
       const e = document.getElementById('track_' + currentTrack);
@@ -354,7 +378,7 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  nextWord () {
+  nextWord() {
     if (this.currentTrack < this.currentSequence.length) {
       const currentTrack = this.currentSequence[this.currentTrack];
       setTimeout(() => {
@@ -370,7 +394,7 @@ export class AppComponent implements AfterViewInit {
     this.nextWord();
   }
 
-  preload () {
+  preload() {
     this.tracks.forEach(track => {
       const e = document.getElementById('track_' + track);
       e['muted'] = true;

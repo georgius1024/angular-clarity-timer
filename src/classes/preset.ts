@@ -1,5 +1,5 @@
 export class Preset {
-  static assign (config: any) {
+  static assign(config: any) {
     return new Preset(
       config.id,
       config.name,
@@ -93,6 +93,16 @@ export class Preset {
       last30: 1,
       last10: 1
     };
+    const foilPreset = {
+      id: 'foil',
+      name: 'Силуэты',
+      duration: 2.5,
+      every: 1,
+      countdown: 0,
+      final: 0,
+      last30: 1,
+      last10: 0
+    };
     return [
       defaultPreset,
       ftbrPreset,
@@ -101,11 +111,12 @@ export class Preset {
       practicePreset,
       training5Preset,
       training10Preset,
-      basicPreset
+      basicPreset,
+      foilPreset
     ].map(e => Preset.assign(e));
   }
 
-  constructor (
+  constructor(
     public id: string,
     public name: string,
     public duration: number,
@@ -114,11 +125,16 @@ export class Preset {
     public final: number,
     public last30: boolean,
     public last10: boolean
-  ) {}
+  ) { }
 
-  onTick (minutes: number, seconds: number) {
+  onTick(minutes: number, seconds: number) {
     const minutesRemained = this.duration - minutes;
-    if (minutesRemained === 1) {
+    if (minutesRemained <= 1 && seconds <= 30 && this.id === 'foil') {
+      const secondsRemained = 30 - seconds;
+      if (secondsRemained % 10 === 0 && secondsRemained) {
+        return this.secondsRemained(secondsRemained);
+      }
+    } else if (minutesRemained === 1 && this.id !== 'foil') {
       // Последняя минута
       const secondsRemained = 60 - seconds;
       if (this.last30 && (secondsRemained === 30 || secondsRemained === 20)) {
@@ -128,7 +144,7 @@ export class Preset {
       } else if (this.last10 && secondsRemained <= 10) {
         return this.secondsLastDozen(secondsRemained);
       }
-    } else if (seconds === 0) {
+    } else if (seconds === 0 && this.id !== 'foil') {
       if (minutesRemained && this.final && minutesRemained <= this.final) {
         return this.minutesRemained(minutesRemained);
       } else if (minutes && this.every && minutes % this.every === 0) {
@@ -138,31 +154,33 @@ export class Preset {
           return this.minutesRemained(minutesRemained);
         }
       }
+    } else if (seconds === 30 && this.id === 'foil') {
+      return this.minutesRemained(Math.floor(minutesRemained));
     }
     return [];
   }
 
-  minutesPassed (minutes) {
+  minutesPassed(minutes) {
     return this.speakQuantity('passed', minutes, 'm');
   }
 
-  minutesRemained (minutes) {
+  minutesRemained(minutes) {
     return this.speakQuantity('remained', minutes, 'm');
   }
 
-  secondsPassed (seconds) {
+  secondsPassed(seconds) {
     return this.speakQuantity('passed', seconds, 's');
   }
 
-  secondsRemained (seconds) {
+  secondsRemained(seconds) {
     return this.speakQuantity('remained', seconds, 's');
   }
 
-  secondsLastDozen (seconds) {
+  secondsLastDozen(seconds) {
     return this.speakQuantity('', seconds, '');
   }
 
-  speakQuantity (prefix, qty, units) {
+  speakQuantity(prefix, qty, units) {
     const speech = [];
     if (prefix) {
       speech.push(prefix);
@@ -241,5 +259,4 @@ export class Preset {
     }
     return speech;
   }
-
 }
