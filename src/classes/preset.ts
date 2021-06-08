@@ -97,7 +97,7 @@ export class Preset {
       id: 'scrub3',
       name: 'Три минуты',
       duration: 3,
-      every: 0,
+      every: 1,
       countdown: 1,
       final: 0,
       last30: 1,
