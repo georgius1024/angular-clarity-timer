@@ -98,7 +98,7 @@ export class Preset {
       name: 'Три минуты',
       duration: 3,
       every: 1,
-      countdown: 1,
+      countdown: 2,
       final: 0,
       last30: 1,
       last10: 1
