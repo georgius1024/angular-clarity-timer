@@ -93,6 +93,16 @@ export class Preset {
       last30: 1,
       last10: 1
     };
+    const shortPreset = {
+      id: 'scrub3',
+      name: 'Три минуты',
+      duration: 3,
+      every: 0,
+      countdown: 1,
+      final: 0,
+      last30: 1,
+      last10: 1
+    };
     const foilPreset = {
       id: 'foil',
       name: 'Силуэты',
@@ -112,6 +122,7 @@ export class Preset {
       training5Preset,
       training10Preset,
       basicPreset,
+      shortPreset,
       foilPreset
     ].map(e => Preset.assign(e));
   }
